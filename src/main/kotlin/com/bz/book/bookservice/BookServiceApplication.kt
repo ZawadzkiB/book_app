@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
@@ -26,4 +27,17 @@ data class Book(
         val author: String,
         val pages: Int,
         val rate: Int
+)
+
+@Repository
+interface CommentRepository : CrudRepository<Comment, UUID>
+
+@Entity
+data class Comment(
+        @Id
+        val id: UUID = UUID.randomUUID(),
+        val bookId: UUID,
+        val nickname: String,
+        val comment: String,
+        val addTime: LocalDateTime
 )
