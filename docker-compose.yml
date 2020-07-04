@@ -1,0 +1,10 @@
+version: "3.6"
+
+services:
+  book_database:
+    container_name: book_db
+    image: postgres:11.1-alpine
+    env_file:
+      - .env
+    ports:
+      - 54322:5432

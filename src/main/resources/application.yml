@@ -1,0 +1,29 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:54322/bookDB
+    username: bookUser
+    password: book123
+
+  jpa:
+    openInView: false
+    show_sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.lob.non_contextual_creation: true
+
+  data:
+    jpa:
+      repositories.enabled: true
+
+logging:
+  level:
+    org.springframework.web: INFO
+    com.bz.book: INFO
+  file:
+    max-size: 50MB
+    max-history: 2
