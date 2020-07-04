@@ -2,7 +2,9 @@ package com.bz.book.bookservice
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import java.util.*
@@ -26,7 +28,10 @@ data class Book(
         val title: String,
         val author: String,
         val pages: Int,
-        val rate: Int
+        val rate: Int,
+        @OneToMany(fetch = FetchType.LAZY)
+        @JoinColumn(name = "book_id")
+        val lastComments: List<LastComments>? = emptyList()
 )
 
 @Repository
@@ -40,4 +45,18 @@ data class Comment(
         val nickname: String,
         val comment: String,
         val addTime: LocalDateTime
+)
+
+@Repository
+interface LastCommentsRepository : CrudRepository<LastComments, UUID>
+
+@Entity
+data class LastComments(
+        @Id
+        val id: UUID = UUID.randomUUID(),
+        @OneToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "comment_id", referencedColumnName = "id")
+        val comment: Comment,
+        @Column(name = "book_id")
+        val bookId: UUID
 )
