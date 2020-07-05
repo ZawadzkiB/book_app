@@ -10,19 +10,9 @@ import java.lang.RuntimeException
 @Service
 class AddBookService(val bookRepository: BookRepository) {
 
-    fun addBook(addBookRequest: AddBookRequest) = bookRepository
-            .save(validateRequest(addBookRequest).toBook())
+    fun addBook(bookRequest: BookRequest) = bookRepository
+            .save(bookRequest.validateRequest().toBook())
             .toResponse()
-
-    fun validateRequest(addBookRequest: AddBookRequest): AddBookRequest {
-        if(addBookRequest.rate < 0 || addBookRequest.rate > 5){
-            throw BookValidationException("Rate should be from 0 to 5")
-        }
-        if(!addBookRequest.isbn.isValidISBN()){
-            throw BookValidationException("ISBN is not valid")
-        }
-        return addBookRequest
-    }
 }
 
 private fun String.isValidISBN(): Boolean {
@@ -33,6 +23,17 @@ private fun String.isValidISBN(): Boolean {
 @ResponseStatus(code = HttpStatus.BAD_REQUEST)
 class BookValidationException(message: String?) : RuntimeException(message)
 
-data class AddBookRequest(val author: String, val isbn: String, val pages: Int, val rate: Int, val title: String) {
+data class BookRequest(val author: String, val isbn: String, val pages: Int, val rate: Int, val title: String) {
+
     fun toBook(): Book = Book(author = author, isbn = isbn, pages = pages, rate = rate, title = title)
+
+    fun validateRequest(): BookRequest {
+        if(this.rate < 0 || this.rate > 5){
+            throw BookValidationException("Rate should be from 0 to 5")
+        }
+        if(!this.isbn.isValidISBN()){
+            throw BookValidationException("ISBN is not valid")
+        }
+        return this
+    }
 }

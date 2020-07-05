@@ -3,8 +3,7 @@ package com.bz.book.bookservice.controller
 import com.bz.book.bookservice.IntegrationBase
 import com.bz.book.bookservice.repository.Book
 import com.bz.book.bookservice.repository.BookRepository
-import com.bz.book.bookservice.service.AddBookRequest
-import com.bz.book.bookservice.service.EditBookRequest
+import com.bz.book.bookservice.service.BookRequest
 import com.bz.book.bookservice.service.FindBookService
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
@@ -80,7 +79,7 @@ class BookControllerTest : IntegrationBase() {
 
     @Test
     fun `add book should return 201`() {
-        val bookRequest = AddBookRequest(author = "testAuthor1", isbn = "1-56619-909-3", pages = 123, rate = 5, title = "book1")
+        val bookRequest = BookRequest(author = "testAuthor1", isbn = "1-56619-909-3", pages = 123, rate = 5, title = "book1")
 
         val bookId = given().port(randomServerPort).basePath("/api/book")
                 .body(bookRequest)
@@ -97,7 +96,7 @@ class BookControllerTest : IntegrationBase() {
 
     @Test
     fun `add book should return 400 when wrong isbn`() {
-        val bookRequest = AddBookRequest(author = "testAuthor1", isbn = "aaaa", pages = 123, rate = 5, title = "book1")
+        val bookRequest = BookRequest(author = "testAuthor1", isbn = "aaaa", pages = 123, rate = 5, title = "book1")
 
         given().port(randomServerPort).basePath("/api/book")
                 .body(bookRequest)
@@ -110,7 +109,7 @@ class BookControllerTest : IntegrationBase() {
 
     @Test
     fun `add book should return 400 when wrong rate`() {
-        val bookRequest = AddBookRequest(author = "testAuthor1", isbn = "1-56619-909-3", pages = 123, rate = 6, title = "book1")
+        val bookRequest = BookRequest(author = "testAuthor1", isbn = "1-56619-909-3", pages = 123, rate = 6, title = "book1")
 
         given().port(randomServerPort).basePath("/api/book")
                 .body(bookRequest)
@@ -137,7 +136,7 @@ class BookControllerTest : IntegrationBase() {
 
     @Test
     fun `put book should return 200`() {
-        val editBook = EditBookRequest(author = "testAuthor2", isbn = "testIsbn2", pages = 1232, rate = 1, title = "book12")
+        val editBook = BookRequest(author = "testAuthor2", isbn = "1-56619-909-3", pages = 1232, rate = 1, title = "book12")
         val savedBook = bookRepository.save(Book(author = "testAuthor1", isbn = "testIsbn", pages = 123, rate = 5, title = "book1"))
 
         given().port(randomServerPort).basePath("/api/book/{id}")

@@ -26,13 +26,13 @@ class BookController(
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    fun addBook(@RequestBody addBookRequest: AddBookRequest) = addBookService.addBook(addBookRequest)
+    fun addBook(@RequestBody addBookRequest: BookRequest) = addBookService.addBook(addBookRequest)
 
     @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     fun removeBook(@PathVariable(name = "id") id: UUID) = removeBookService.removeBook(id)
 
     @PutMapping("/{id}")
-    fun editBook(@PathVariable(name = "id") id: UUID, @RequestBody editBookRequest: EditBookRequest) =
+    fun editBook(@PathVariable(name = "id") id: UUID, @RequestBody editBookRequest: BookRequest) =
             editBookService.editBook(id, editBookRequest)
 }

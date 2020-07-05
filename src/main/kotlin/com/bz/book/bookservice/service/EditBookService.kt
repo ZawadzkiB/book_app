@@ -9,17 +9,16 @@ import java.util.*
 class EditBookService(val bookRepository: BookRepository) {
 
     @Transactional
-    fun editBook(bookId: UUID, editBookRequest: EditBookRequest): BookResponse {
+    fun editBook(bookId: UUID, bookRequest: BookRequest): BookResponse {
         val book = bookRepository.findByIdAndRemoveFalse(bookId).orElseThrow { BookNotFoundException("Book Not Found") }
-        book.author = editBookRequest.author
-        book.isbn = editBookRequest.isbn
-        book.pages = editBookRequest.pages
-        book.rate = editBookRequest.rate
-        book.title = editBookRequest.title
+        bookRequest.validateRequest()
+        book.author = bookRequest.author
+        book.isbn = bookRequest.isbn
+        book.pages = bookRequest.pages
+        book.rate = bookRequest.rate
+        book.title = bookRequest.title
         return bookRepository.save(book).toResponse()
     }
 
 
 }
-
-data class EditBookRequest(val author: String, val isbn: String, val pages: Int, val rate: Int, val title: String)
