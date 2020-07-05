@@ -11,8 +11,6 @@ import javax.persistence.*
 interface LastCommentsRepository : CrudRepository<LastComments, UUID>{
         @Query(value = "select lc from LastComments lc join fetch lc.comment c where lc.bookId = :bookId")
         fun findAllByBookIdWithComment(@Param("bookId") bookId: UUID): MutableList<LastComments>
-
-        fun deleteAllByBookId(bookId: UUID)
 }
 
 @Entity

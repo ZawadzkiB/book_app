@@ -1,9 +1,6 @@
 package com.bz.book.bookservice.service
 
-import com.bz.book.bookservice.repository.Comment
-import com.bz.book.bookservice.repository.CommentRepository
-import com.bz.book.bookservice.repository.LastComments
-import com.bz.book.bookservice.repository.LastCommentsRepository
+import com.bz.book.bookservice.repository.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -11,10 +8,12 @@ import java.util.*
 
 @Service
 class CommentsService(val commentRepository: CommentRepository,
-                      val lastCommentsRepository: LastCommentsRepository) {
+                      val lastCommentsRepository: LastCommentsRepository,
+                      val bookRepository: BookRepository) {
 
     @Transactional
     fun addComment(commentRequest: CommentRequest): CommentResponse {
+        checkIfCanAddComment(commentRequest.bookId)
         val comment = commentRepository.save(commentRequest.toComment())
         addLastComments(comment)
         return comment.toResponse()
@@ -30,6 +29,16 @@ class CommentsService(val commentRepository: CommentRepository,
                 lastCommentsRepository.save(it)
             }
         }
+    }
+
+    private fun checkIfCanAddComment(bookId: UUID){
+        bookRepository.findById(bookId)
+                .orElseThrow { BookNotFoundException("Book Not Found") }
+                .let {
+                    if(it.remove){
+                        throw BookNotFoundException("Book Was Removed")
+                    }
+                }
     }
 }
 

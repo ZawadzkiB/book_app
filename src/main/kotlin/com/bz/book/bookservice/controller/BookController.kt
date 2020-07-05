@@ -3,6 +3,7 @@ package com.bz.book.bookservice.controller
 import com.bz.book.bookservice.service.AddBookRequest
 import com.bz.book.bookservice.service.AddBookService
 import com.bz.book.bookservice.service.FindBookService
+import com.bz.book.bookservice.service.RemoveBookService
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -12,7 +13,8 @@ import java.util.*
 @RequestMapping("/api/book")
 class BookController(
         val findBookService: FindBookService,
-        val addBookService: AddBookService
+        val addBookService: AddBookService,
+        val removeBookService: RemoveBookService
 ) {
 
     @GetMapping
@@ -27,4 +29,8 @@ class BookController(
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     fun addBook(@RequestBody addBookRequest: AddBookRequest) = addBookService.addBook(addBookRequest)
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    fun removeBook(@PathVariable(name = "id") id: UUID) = removeBookService.removeBook(id)
 }

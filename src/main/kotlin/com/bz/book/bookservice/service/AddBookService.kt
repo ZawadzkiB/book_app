@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 @Service
 class AddBookService(val bookRepository: BookRepository) {
 
-    fun addBook(addBookRequest: AddBookRequest) = bookRepository.save(addBookRequest.toBook())
+    fun addBook(addBookRequest: AddBookRequest) = bookRepository.save(addBookRequest.toBook()).toResponse()
 
 }
 

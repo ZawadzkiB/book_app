@@ -8,9 +8,7 @@ import javax.persistence.Entity
 import javax.persistence.Id
 
 @Repository
-interface CommentRepository : CrudRepository<Comment, UUID>{
-        fun deleteAllByBookId(bookId: UUID)
-}
+interface CommentRepository : CrudRepository<Comment, UUID>
 
 @Entity
 data class Comment(

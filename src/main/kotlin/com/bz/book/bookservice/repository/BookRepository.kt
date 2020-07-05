@@ -10,8 +10,13 @@ import javax.persistence.*
 
 @Repository
 interface BookRepository : CrudRepository<Book, UUID>{
-        @Query(value = "select distinct b from Book b left join b.lastComments lc left join lc.comment c")
+        @Query(
+                value = "select distinct b from Book b left join fetch b.lastComments lc left join fetch lc.comment c where b.remove = false",
+                countQuery = "select count(b) from Book b where b.remove = false"
+        )
         fun findAllWithComments(pageable: Pageable): Page<Book>
+
+        fun findByIdAndRemoveFalse(id: UUID) : Optional<Book>
 }
 
 @Entity
@@ -23,7 +28,9 @@ data class Book(
         val author: String,
         val pages: Int,
         val rate: Int,
-        @OneToMany(fetch = FetchType.EAGER)
+        @OneToMany(fetch = FetchType.LAZY)
         @JoinColumn(name = "book_id")
-        val lastComments: List<LastComments> = emptyList()
+        val lastComments: List<LastComments> = emptyList(),
+        var remove: Boolean = false
+
 )

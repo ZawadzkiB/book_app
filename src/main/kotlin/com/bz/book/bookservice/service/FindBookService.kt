@@ -20,7 +20,8 @@ class FindBookService(val bookRepository: BookRepository) {
     @Transactional
     fun findBooks(page: PageRequest): Page<BookResponse> = bookRepository.findAllWithComments(page).toResponse()
 
-    fun findBookById(id: UUID) = bookRepository.findById(id)
+    @Transactional
+    fun findBookById(id: UUID) = bookRepository.findByIdAndRemoveFalse(id)
             .orElseThrow { BookNotFoundException("Book Not Found") }
             .toResponse()
 }
