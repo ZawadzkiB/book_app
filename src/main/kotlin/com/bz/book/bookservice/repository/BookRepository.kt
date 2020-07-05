@@ -1,6 +1,5 @@
 package com.bz.book.bookservice.repository
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
@@ -13,6 +12,8 @@ import javax.persistence.*
 interface BookRepository : CrudRepository<Book, UUID>{
         @Query(value = "select distinct b from Book b left join b.lastComments lc left join lc.comment c")
         fun findAllWithComments(pageable: Pageable): Page<Book>
+
+        fun findAll(pageable: Pageable): Page<Book>
 }
 
 @Entity
@@ -24,8 +25,7 @@ data class Book(
         val author: String,
         val pages: Int,
         val rate: Int,
-        @OneToMany(fetch = FetchType.LAZY)
+        @OneToMany(fetch = FetchType.EAGER)
         @JoinColumn(name = "book_id")
-        @JsonIgnore
         val lastComments: List<LastComments> = emptyList()
 )
