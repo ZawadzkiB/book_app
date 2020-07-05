@@ -16,6 +16,8 @@ repositories {
     mavenCentral()
 }
 
+val testContainersVersion = "1.14.3"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -27,6 +29,11 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+    testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
+    testImplementation("org.testcontainers:postgresql:$testContainersVersion")
+    testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
+    testImplementation("io.rest-assured:rest-assured:4.1.1")
+    testImplementation("io.rest-assured:rest-assured-all:4.1.1")
 }
 
 tasks.withType<Test> {
