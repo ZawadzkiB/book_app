@@ -8,7 +8,9 @@ import javax.persistence.Entity
 import javax.persistence.Id
 
 @Repository
-interface CommentRepository : CrudRepository<Comment, UUID>
+interface CommentRepository : CrudRepository<Comment, UUID>{
+        fun deleteAllByBookId(bookId: UUID)
+}
 
 @Entity
 data class Comment(
@@ -17,5 +19,5 @@ data class Comment(
         val bookId: UUID,
         val nickname: String,
         val comment: String,
-        val addTime: LocalDateTime
+        val addTime: LocalDateTime = LocalDateTime.now()
 )

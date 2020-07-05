@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.ResponseStatus
 import java.lang.RuntimeException
+import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -29,14 +30,17 @@ class BookNotFoundException(message: String?) : RuntimeException(message)
 
 fun Page<Book>.toResponse() = PageImpl(this.content.map { it.toResponse() }, this.pageable, this.totalElements)
 
-fun Book.toResponse() = BookResponse(this.id, this.isbn, this.title, this.author, this.lastComments.map { cm -> cm.comment }, this.pages, this.rate)
+fun Book.toResponse() = BookResponse(this.id, this.isbn, this.title, this.author, this.lastComments.map { cm -> cm.comment.toBasicResponse() }, this.pages, this.rate)
 
+fun Comment.toBasicResponse() = BasicCommentResponse(nickname = this.nickname, comment = this.comment, time = this.addTime)
+
+data class BasicCommentResponse(val nickname: String, val comment: String, val time: LocalDateTime)
 
 data class BookResponse(
         val id: UUID,
         val isbn: String,
         val title: String,
         val author: String,
-        val comments: List<Comment>,
+        val comments: List<BasicCommentResponse>,
         val pages: Int,
         val rate: Int)
