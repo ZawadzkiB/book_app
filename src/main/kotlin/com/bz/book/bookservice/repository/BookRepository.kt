@@ -12,8 +12,6 @@ import javax.persistence.*
 interface BookRepository : CrudRepository<Book, UUID>{
         @Query(value = "select distinct b from Book b left join b.lastComments lc left join lc.comment c")
         fun findAllWithComments(pageable: Pageable): Page<Book>
-
-        fun findAll(pageable: Pageable): Page<Book>
 }
 
 @Entity

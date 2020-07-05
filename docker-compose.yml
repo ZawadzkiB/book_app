@@ -8,3 +8,13 @@ services:
       - .env
     ports:
       - 54322:5432
+
+  book_backend:
+    container_name: book_app
+    image: zawadzkib/book-app:latest
+    env_file:
+      - .env
+    depends_on:
+      - book_database
+    ports:
+      - 8081:8081

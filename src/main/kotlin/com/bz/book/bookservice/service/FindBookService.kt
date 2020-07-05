@@ -18,7 +18,7 @@ import java.util.*
 class FindBookService(val bookRepository: BookRepository) {
 
     @Transactional
-    fun findBooks(page: PageRequest): Page<BookResponse> = bookRepository.findAll(page).toResponse()
+    fun findBooks(page: PageRequest): Page<BookResponse> = bookRepository.findAllWithComments(page).toResponse()
 
     fun findBookById(id: UUID) = bookRepository.findById(id)
             .orElseThrow { BookNotFoundException("Book Not Found") }
