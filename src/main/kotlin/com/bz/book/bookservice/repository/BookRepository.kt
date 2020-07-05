@@ -23,11 +23,11 @@ interface BookRepository : CrudRepository<Book, UUID>{
 data class Book(
         @Id
         val id: UUID = UUID.randomUUID(),
-        val isbn: String,
-        val title: String,
-        val author: String,
-        val pages: Int,
-        val rate: Int,
+        var isbn: String,
+        var title: String,
+        var author: String,
+        var pages: Int,
+        var rate: Int,
         @OneToMany(fetch = FetchType.LAZY)
         @JoinColumn(name = "book_id")
         val lastComments: List<LastComments> = emptyList(),

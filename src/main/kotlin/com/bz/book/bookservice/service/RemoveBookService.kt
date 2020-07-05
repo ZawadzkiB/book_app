@@ -5,9 +5,7 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class RemoveBookService(
-        val bookRepository: BookRepository
-) {
+class RemoveBookService(val bookRepository: BookRepository) {
 
     fun removeBook(bookId: UUID){
         val bookToRemove = bookRepository.findById(bookId)

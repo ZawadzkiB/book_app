@@ -4,6 +4,7 @@ import com.bz.book.bookservice.IntegrationBase
 import com.bz.book.bookservice.repository.Book
 import com.bz.book.bookservice.repository.BookRepository
 import com.bz.book.bookservice.service.AddBookRequest
+import com.bz.book.bookservice.service.EditBookRequest
 import com.bz.book.bookservice.service.FindBookService
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
@@ -79,7 +80,7 @@ class BookControllerTest : IntegrationBase() {
 
     @Test
     fun `add book should return 201`() {
-        val bookRequest = AddBookRequest(author = "testAuthor1", isbn = "testIsbn", pages = 123, rate = 5, title = "book1")
+        val bookRequest = AddBookRequest(author = "testAuthor1", isbn = "1-56619-909-3", pages = 123, rate = 5, title = "book1")
 
         val bookId = given().port(randomServerPort).basePath("/api/book")
                 .body(bookRequest)
@@ -92,6 +93,73 @@ class BookControllerTest : IntegrationBase() {
 
         val bookResponse = findBookService.findBookById(UUID.fromString(bookId))
         assertThat(bookResponse).isEqualToIgnoringGivenFields(bookRequest, "id", "comments")
+    }
+
+    @Test
+    fun `add book should return 400 when wrong isbn`() {
+        val bookRequest = AddBookRequest(author = "testAuthor1", isbn = "aaaa", pages = 123, rate = 5, title = "book1")
+
+        given().port(randomServerPort).basePath("/api/book")
+                .body(bookRequest)
+                .contentType(ContentType.JSON)
+                .`when`()
+                .post()
+                .then()
+                .statusCode(400)
+    }
+
+    @Test
+    fun `add book should return 400 when wrong rate`() {
+        val bookRequest = AddBookRequest(author = "testAuthor1", isbn = "1-56619-909-3", pages = 123, rate = 6, title = "book1")
+
+        given().port(randomServerPort).basePath("/api/book")
+                .body(bookRequest)
+                .contentType(ContentType.JSON)
+                .`when`()
+                .post()
+                .then()
+                .statusCode(400)
+    }
+
+    @Test
+    fun `delete book should return 204 `() {
+        val savedBook = bookRepository.save(Book(author = "testAuthor1", isbn = "testIsbn", pages = 123, rate = 5, title = "book1"))
+
+        given().port(randomServerPort).basePath("/api/book/{id}")
+                .pathParam("id", savedBook.id)
+                .`when`()
+                .delete()
+                .then()
+                .statusCode(204)
+
+        assertThat(bookRepository.findByIdAndRemoveFalse(savedBook.id)).isEmpty
+    }
+
+    @Test
+    fun `put book should return 200`() {
+        val editBook = EditBookRequest(author = "testAuthor2", isbn = "testIsbn2", pages = 1232, rate = 1, title = "book12")
+        val savedBook = bookRepository.save(Book(author = "testAuthor1", isbn = "testIsbn", pages = 123, rate = 5, title = "book1"))
+
+        given().port(randomServerPort).basePath("/api/book/{id}")
+                .pathParam("id", savedBook.id)
+                .body(editBook)
+                .contentType(ContentType.JSON)
+                .`when`()
+                .put()
+                .then()
+                .statusCode(200)
+
+        given().port(randomServerPort).basePath("/api/book/${savedBook.id}")
+                .`when`()
+                .get()
+                .then()
+                .statusCode(200)
+                .body("id", Matchers.equalTo(savedBook.id.toString()))
+                .body("title", Matchers.equalTo(editBook.title))
+                .body("author", Matchers.equalTo(editBook.author))
+                .body("isbn", Matchers.equalTo(editBook.isbn))
+                .body("pages", Matchers.equalTo(editBook.pages))
+                .body("rate", Matchers.equalTo(editBook.rate))
     }
 }
 
