@@ -4,6 +4,7 @@ import com.bz.book.bookservice.IntegrationBase
 import com.bz.book.bookservice.repository.*
 import com.bz.book.bookservice.service.BasicCommentResponse
 import com.bz.book.bookservice.service.CommentRequest
+import com.bz.book.bookservice.service.CommentsService
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions.assertThat
@@ -23,6 +24,9 @@ class CommentControllerTest : IntegrationBase() {
 
     @Autowired
     lateinit var commentsRepository: CommentRepository
+
+    @Autowired
+    lateinit var commentsService: CommentsService
 
     @LocalServerPort
     var randomServerPort = 0
@@ -58,6 +62,23 @@ class CommentControllerTest : IntegrationBase() {
 
 
         assertThat(lastComments.size).isEqualTo(1)
+    }
+
+    @Test
+    fun `add more than 5 comments but on book only 5 should be visible`(){
+        val savedBook = bookRepository.save(Book(author = "testAuthor1", isbn = "testIsbn", pages = 123, rate = 5, title = "book1"))
+        val comment = CommentRequest(nickname = "nick1", comment = "comment1", bookId = savedBook.id)
+
+        repeat(7) { commentsService.addComment(comment) }
+
+        val lastComments = RestAssured.given().port(randomServerPort).basePath("/api/book/${savedBook.id}")
+                .`when`()
+                .get()
+                .then()
+                .statusCode(200)
+                .extract().jsonPath().getList<BasicCommentResponse>("comments")
+
+        assertThat(lastComments.size).isEqualTo(5)
     }
 
 }

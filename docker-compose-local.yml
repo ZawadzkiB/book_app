@@ -11,7 +11,7 @@ services:
 
   book_backend:
     container_name: book_app
-    image: zawadzkib/book-app:0.0.1
+    image: book-app:latest
     env_file:
       - .env
     depends_on:
